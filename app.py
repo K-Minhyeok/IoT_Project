@@ -48,6 +48,7 @@ def toggle_valve():
     elif side == 'right':
         valve.right = not valve.right
 
+    #여기에 MQTT로 신호 보내는 게 필요할 것 같다.
     print(valve)
     return jsonify({
         'valve': valve_number,
