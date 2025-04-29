@@ -7,9 +7,8 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = 'super-secret-key'  
 
-# 비밀번호 설정
 PASSWORD_HASH = generate_password_hash('pohang') 
-# 밸브 객체들 초기화
+
 valves = {i: Valve(i) for i in range(1, 6)}
 
 @app.route('/')
@@ -49,7 +48,7 @@ def toggle_valve():
         valve.right = not valve.right
 
     #여기에 MQTT로 신호 보내는 게 필요할 것 같다.
-    print(valve)
+    print(valve,"를 MQTT로 전송")
     return jsonify({
         'valve': valve_number,
         'left': valve.left,
