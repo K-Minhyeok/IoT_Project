@@ -164,11 +164,27 @@
     }
 
     function selectFlow(valveId, side) {
-      const valve = document.getElementById(valveId);
-      const target = valve.querySelector(`.side-button[data-side="${side}"]`);
-      target.classList.toggle('flowing');
-      valve.querySelector('.select-panel').style.display = 'none';
-    }
+  const valveNum = parseInt(valveId.replace('valve', ''));
+  const target = document.querySelector(`#${valveId} .side-button[data-side="${side}"]`);
+  target.classList.toggle('flowing');
+
+  fetch('/toggle', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      valve: valveNum,
+      side: side
+    })
+  })
+  .then(response => response.json())
+  .then(data => console.log('Flask 응답:', data))
+  .catch(error => console.error('Error:', error));
+
+  document.querySelector(`#${valveId} .select-panel`).style.display = 'none';
+}
+
   </script>
 
 </body>
