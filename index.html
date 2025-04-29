@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>물 밸브 제어판</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #8B5E3C;
+      font-family: sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      transform: scale(1); 
+      transform-origin: top left;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .top-row, .bottom-row {
+      display: flex;
+      justify-content: center;
+      gap: 100px;
+    }
+
+    .top-row {
+      height: 25%;
+      align-items: center;
+    }
+
+    .bottom-row {
+      height: 75%;
+      align-items: center;
+    }
+
+    .valve {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  position: relative; 
+}
+
+    .icon {
+      width: 90px;
+      height: 90px;
+      background-image: url('faucet.png'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    .side-button {
+      background-color: #88dc5b;
+      border-radius: 10px;
+      padding: 20px 25px;
+      font-weight: bold;
+      min-width: 100px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .side-button.flowing {
+      background-color: #00bfff;
+      color: white;
+    }
+
+    .select-panel {
+  display: none;
+  position: absolute;  
+  top: 100%;            
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  text-align: center;
+  margin-top: 5px;
+  z-index: 10;
+}
+
+    .select-panel button {
+      margin: 5px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-row">
+      <div class="valve" id="valve5">
+        <div class="side-button" data-side="left">5 : 좌</div>
+        <div class="icon" onclick="toggleSelectPanel('valve5')"></div>
+        <div class="side-button" data-side="right">5 : 우</div>
+        <div class="select-panel">
+          <div>5번 밸브 방향 선택</div>
+          <button onclick="selectFlow('valve5', 'left')">좌</button>
+          <button onclick="selectFlow('valve5', 'right')">우</button>
+        </div>
+      </div>
+      <div class="valve" id="valve1">
+        <div class="side-button" data-side="left">1 : 좌</div>
+        <div class="icon" onclick="toggleSelectPanel('valve1')"></div>
+        <div class="side-button" data-side="right">1 : 우</div>
+        <div class="select-panel">
+          <div>1번 밸브 방향 선택</div>
+          <button onclick="selectFlow('valve1', 'left')">좌</button>
+          <button onclick="selectFlow('valve1', 'right')">우</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-row">
+      <div class="valve" id="valve4">
+        <div class="side-button" data-side="left">4 : 좌</div>
+        <div class="icon" onclick="toggleSelectPanel('valve4')"></div>
+        <div class="side-button" data-side="right">4 : 우</div>
+        <div class="select-panel">
+          <div>4번 밸브 방향 선택</div>
+          <button onclick="selectFlow('valve4', 'left')">좌</button>
+          <button onclick="selectFlow('valve4', 'right')">우</button>
+        </div>
+      </div>
+      <div class="valve" id="valve3">
+        <div class="side-button" data-side="left">3 : 좌</div>
+        <div class="icon" onclick="toggleSelectPanel('valve3')"></div>
+        <div class="side-button" data-side="right">3 : 우</div>
+        <div class="select-panel">
+          <div>3번 밸브 방향 선택</div>
+          <button onclick="selectFlow('valve3', 'left')">좌</button>
+          <button onclick="selectFlow('valve3', 'right')">우</button>
+        </div>
+      </div>
+      <div class="valve" id="valve2">
+        <div class="side-button" data-side="left">2 : 좌</div>
+        <div class="icon" onclick="toggleSelectPanel('valve2')"></div>
+        <div class="side-button" data-side="right">2 : 우</div>
+        <div class="select-panel">
+          <div>2번 밸브 방향 선택</div>
+          <button onclick="selectFlow('valve2', 'left')">좌</button>
+          <button onclick="selectFlow('valve2', 'right')">우</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSelectPanel(valveId) {
+      const valve = document.getElementById(valveId);
+      const panel = valve.querySelector('.select-panel');
+      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function selectFlow(valveId, side) {
+      const valve = document.getElementById(valveId);
+      const target = valve.querySelector(`.side-button[data-side="${side}"]`);
+      target.classList.toggle('flowing');
+      valve.querySelector('.select-panel').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
