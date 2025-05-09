@@ -2,12 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from werkzeug.security import generate_password_hash, check_password_hash
 from Valve import Valve
 from flask_cors import CORS
+import config  
+
 
 app = Flask(__name__)
 CORS(app)
-app.secret_key = 'super-secret-key'  
+app.secret_key = config.SECRET_KEY  
 
-PASSWORD_HASH = generate_password_hash('pohang') 
+PASSWORD_HASH = config.PASSWORD_HASH 
 
 valves = {i: Valve(i) for i in range(1, 6)}
 
@@ -26,7 +28,7 @@ def login():
     else:
         return render_template('login.html', error='비밀번호가 틀렸습니다.')
 
-@app.route('/index')
+@app.route('/index') 
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login_page'))
