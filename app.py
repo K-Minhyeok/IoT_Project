@@ -1,9 +1,10 @@
+import json
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from Valve import Valve
 from flask_cors import CORS
 import config  
-
 
 app = Flask(__name__)
 CORS(app)
@@ -11,7 +12,34 @@ app.secret_key = config.SECRET_KEY
 
 PASSWORD_HASH = config.PASSWORD_HASH 
 
+JSON_FILE = 'valves.json'
+
+def initialize_json():
+    if not os.path.exists(JSON_FILE) or os.path.getsize(JSON_FILE) == 0:
+        with open(JSON_FILE, 'w') as f:
+            json.dump({i: {
+                "valve_number": i,
+                "left": False,
+                "right": False,
+                "left_change_time": None,
+                "right_change_time": None
+            } for i in range(1, 6)}, f, indent=4)
+
+initialize_json()
+
 valves = {i: Valve(i) for i in range(1, 6)}
+
+with open(JSON_FILE, 'r') as f:
+    try:
+        data = json.load(f)
+        valves = {int(k): Valve.from_dict(v) for k, v in data.items()}
+    except json.JSONDecodeError:
+        print("JSON 파일이 손상되었습니다. 기본값으로 초기화합니다.")
+        initialize_json()  
+
+def save_to_json():
+    with open(JSON_FILE, 'w') as f:
+        json.dump({k: v.to_dict() for k, v in valves.items()}, f, indent=4)
 
 @app.route('/')
 def login_page():
@@ -20,7 +48,6 @@ def login_page():
 @app.route('/login', methods=['POST'])
 def login():
     password = request.form['password']
-
     if check_password_hash(PASSWORD_HASH, password):
         session['authenticated'] = True
         return redirect(url_for('index'))
@@ -48,7 +75,10 @@ def toggle_valve():
     elif side == 'right':
         valve.toggle_right()
 
-    print(valve, "를 MQTT로 전송")
+    save_to_json()
+
+    #여기에 MQTT로 신호 보내는 게 필요할 것 같다.
+    print(valve," 정보를 MQTT로 전송")
     return jsonify({
         'valve': valve_number,
         'left': valve.left,
@@ -57,6 +87,21 @@ def toggle_valve():
         'right_change_time': valve.right_change_time
     })
 
+@app.route('/save')
+def save_state():
+    save_to_json()
+    return jsonify({'message': '현재 상태가 JSON 파일에 저장되었습니다.'})
+
+@app.route('/load')
+def load_state():
+    global valves
+    if os.path.exists(JSON_FILE):
+        with open(JSON_FILE, 'r') as f:
+            data = json.load(f)
+            valves = {int(k): Valve.from_dict(v) for k, v in data.items()}
+        return jsonify({'message': 'JSON 파일에서 상태가 불러와졌습니다.'})
+    else:
+        return jsonify({'error': 'JSON 파일이 존재하지 않습니다.'})
 
 if __name__ == '__main__':
     app.run(debug=True)

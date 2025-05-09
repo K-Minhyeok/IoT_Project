@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 class Valve:
     def __init__(self, valve_number, left=False, right=False):
@@ -17,16 +18,25 @@ class Valve:
         self.right_change_time = self.current_time() if self.right else None
 
     def current_time(self):
-        return datetime.now()
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    def elapsed_time(self, side):
-        if side == 'left' and self.left and self.left_change_time:
-            delta = datetime.now() - self.left_change_time
-            return int(delta.total_seconds() / 60) 
-        elif side == 'right' and self.right and self.right_change_time:
-            delta = datetime.now() - self.right_change_time
-            return int(delta.total_seconds() / 60)
-        return 0  
+    def to_dict(self):
+        return {
+            "valve_number": self.valve_number,
+            "left": self.left,
+            "right": self.right,
+            "left_change_time": self.left_change_time,
+            "right_change_time": self.right_change_time
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        valve = cls(data["valve_number"])
+        valve.left = data["left"]
+        valve.right = data["right"]
+        valve.left_change_time = data["left_change_time"]
+        valve.right_change_time = data["right_change_time"]
+        return valve
 
     def __str__(self):
         return (
