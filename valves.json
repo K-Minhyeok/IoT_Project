@@ -1,0 +1,37 @@
+{
+    "1": {
+        "valve_number": 1,
+        "left": false,
+        "right": false,
+        "left_change_time": null,
+        "right_change_time": null
+    },
+    "2": {
+        "valve_number": 2,
+        "left": false,
+        "right": false,
+        "left_change_time": null,
+        "right_change_time": null
+    },
+    "3": {
+        "valve_number": 3,
+        "left": false,
+        "right": false,
+        "left_change_time": null,
+        "right_change_time": null
+    },
+    "4": {
+        "valve_number": 4,
+        "left": false,
+        "right": false,
+        "left_change_time": null,
+        "right_change_time": null
+    },
+    "5": {
+        "valve_number": 5,
+        "left": false,
+        "right": false,
+        "left_change_time": null,
+        "right_change_time": null
+    }
+}
