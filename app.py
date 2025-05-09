@@ -20,7 +20,6 @@ def login_page():
 @app.route('/login', methods=['POST'])
 def login():
     password = request.form['password']
-    print(password,"를 입력했습니다.")
 
     if check_password_hash(PASSWORD_HASH, password):
         session['authenticated'] = True
@@ -45,17 +44,19 @@ def toggle_valve():
 
     valve = valves[valve_number]
     if side == 'left':
-        valve.left = not valve.left
+        valve.toggle_left()
     elif side == 'right':
-        valve.right = not valve.right
+        valve.toggle_right()
 
-    #여기에 MQTT로 신호 보내는 게 필요할 것 같다.
-    print(valve,"를 MQTT로 전송")
+    print(valve, "를 MQTT로 전송")
     return jsonify({
         'valve': valve_number,
         'left': valve.left,
-        'right': valve.right
+        'right': valve.right,
+        'left_change_time': valve.left_change_time,
+        'right_change_time': valve.right_change_time
     })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
