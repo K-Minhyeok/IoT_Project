@@ -11,12 +11,12 @@ class Valve:
 
     def toggle_left(self):
         self.left = not self.left
-        self.left_change_time = self.current_time() if self.left else None
+        self.left_change_time = self.current_time() 
 
     def toggle_right(self):
         self.right = not self.right
-        self.right_change_time = self.current_time() if self.right else None
-
+        self.right_change_time = self.current_time() 
+        
     def current_time(self):
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

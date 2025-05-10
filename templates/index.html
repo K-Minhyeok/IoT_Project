@@ -101,6 +101,12 @@ z-index: 10;
   font-weight: bold;
 }
 
+  .active-indicator {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #ff0000;
+    font-weight: bold;
+  }
 
   </style>
 </head>
@@ -167,36 +173,50 @@ z-index: 10;
 
   </div>
 
-  <script>
-    function toggleSelectPanel(valveId) {
-      const valve = document.getElementById(valveId);
-      const panel = valve.querySelector('.select-panel');
-      panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
-    }
+ <script>
+  function toggleSelectPanel(valveId) {
+    const valve = document.getElementById(valveId);
+    const panel = valve.querySelector('.select-panel');
+    panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+  }
 
-    function selectFlow(valveId, side) {
-  const valveNum = parseInt(valveId.replace('valve', ''));
-  const target = document.querySelector(`#${valveId} .side-button[data-side="${side}"]`);
-  target.classList.toggle('flowing');
+function selectFlow(valveId, side) {
+    const valveNum = parseInt(valveId.replace('valve', ''));
+    const target = document.querySelector(`#${valveId} .side-button[data-side="${side}"]`);
+    target.classList.toggle('flowing');
 
-  fetch('/toggle', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      valve: valveNum,
-      side: side
+    fetch('/toggle', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        valve: valveNum,
+        side: side
+      })
     })
-  })
-  .then(response => response.json())
-  .then(data => console.log('Flask 응답:', data))
-  .catch(error => console.error('Error:', error));
+    .then(response => response.json())
+    .then(data => {
+      console.log('Flask 응답:', data);
 
-  document.querySelector(`#${valveId} .select-panel`).style.display = 'none';
-}
+      // "작동 중" 텍스트 처리
+      const existingIndicator = document.querySelector(`#${valveId} .active-indicator[data-side="${side}"]`);
+      if (existingIndicator) {
+        existingIndicator.remove();
+      } else {
+        const indicator = document.createElement('div');
+        indicator.className = 'active-indicator';
+        indicator.setAttribute('data-side', side);
+        indicator.textContent = '작동 중';
+        target.insertAdjacentElement('afterend', indicator);
+      }
+    })
+    .catch(error => console.error('Error:', error));
 
-  </script>
+    document.querySelector(`#${valveId} .select-panel`).style.display = 'none';
+  }
+</script>
+
 
 </body>
 </html>

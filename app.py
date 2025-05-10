@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from Valve import Valve
 from flask_cors import CORS
 import config  
+from datetime import datetime 
 
 app = Flask(__name__)
 CORS(app)
@@ -59,7 +60,6 @@ def index():
     if not session.get('authenticated'):
         return redirect(url_for('login_page'))
     return render_template('index.html')
-
 @app.route('/toggle', methods=['POST'])
 def toggle_valve():
     if not session.get('authenticated'):
@@ -76,15 +76,17 @@ def toggle_valve():
         valve.toggle_right()
 
     save_to_json()
-
-    #여기에 MQTT로 신호 보내는 게 필요할 것 같다.
+ #여기에 MQTT로 신호 보내는 게 필요할 것 같다.
     print(valve," 정보를 MQTT로 전송")
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     return jsonify({
         'valve': valve_number,
         'left': valve.left,
         'right': valve.right,
         'left_change_time': valve.left_change_time,
-        'right_change_time': valve.right_change_time
+        'right_change_time': valve.right_change_time,
+        'current_time': current_time  # 현재 시간 추가
     })
 
 @app.route('/save')
