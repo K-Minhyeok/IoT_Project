@@ -209,16 +209,21 @@
   </div>
 
 <script>
-// 페이지 로드 시 상태 적용
   document.addEventListener('DOMContentLoaded', function() {
-    fetch('/load')  // 서버에서 JSON 파일 상태 로드
+    fetchAndUpdateValveStates();
+    setInterval(fetchAndUpdateValveStates, 10000); // 10초마다 업데이트
+  });
+
+  // 상태 로드 및 업데이트 함수
+  function fetchAndUpdateValveStates() {
+    fetch('/load')
       .then(response => response.json())
       .then(data => {
         console.log('초기 상태 로드:', data);
-        updateValveStates(data.valves);  // 로드된 상태로 UI 업데이트
+        updateValveStates(data.valves);
       })
       .catch(error => console.error('Error:', error));
-  });
+  }
 
   // 밸브 상태를 UI에 반영
   function updateValveStates(valves) {
@@ -237,7 +242,7 @@
         if (isActive) {
           button.classList.add('flowing');
           const activeDuration = calculateActiveDuration(valve[`${side}_change_time`]);
-          indicator.textContent = `켜진지 ${activeDuration} 분 경과`;
+          indicator.textContent = `${activeDuration}`;
           indicator.style.display = 'block';
         } else {
           button.classList.remove('flowing');
@@ -247,13 +252,20 @@
     }
   }
 
-  // 활성 시간 계산 (분 단위)
+  // 활성 시간 계산 (hh:mm 형식)
   function calculateActiveDuration(changeTime) {
-    if (!changeTime) return '0';
+    if (!changeTime) return '0:00';
     const currentTime = new Date();
     const changeTimeDate = new Date(changeTime);
-    const duration = Math.floor((currentTime - changeTimeDate) / (1000 * 60)); // 분 단위
-    return duration > 0 ? duration : '<1'; // 1분 미만일 경우
+    const durationMs = currentTime - changeTimeDate;
+
+    if (durationMs < 0) return '0:00';
+
+    const durationMinutes = Math.floor(durationMs / (1000 * 60)); // 분 단위
+    const durationHours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+
+    return `${String(durationHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   }
     function toggleSelectPanel(valveId) {
       const valve = document.getElementById(valveId);
