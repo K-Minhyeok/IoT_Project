@@ -209,8 +209,8 @@
   </div>
 
 <script>
-
-    document.addEventListener('DOMContentLoaded', function() {
+// 페이지 로드 시 상태 적용
+  document.addEventListener('DOMContentLoaded', function() {
     fetch('/load')  // 서버에서 JSON 파일 상태 로드
       .then(response => response.json())
       .then(data => {
@@ -236,7 +236,8 @@
 
         if (isActive) {
           button.classList.add('flowing');
-          indicator.textContent = '작동 중';
+          const activeDuration = calculateActiveDuration(valve[`${side}_change_time`]);
+          indicator.textContent = `켜진지 ${activeDuration} 분 경과`;
           indicator.style.display = 'block';
         } else {
           button.classList.remove('flowing');
@@ -244,6 +245,15 @@
         }
       });
     }
+  }
+
+  // 활성 시간 계산 (분 단위)
+  function calculateActiveDuration(changeTime) {
+    if (!changeTime) return '0';
+    const currentTime = new Date();
+    const changeTimeDate = new Date(changeTime);
+    const duration = Math.floor((currentTime - changeTimeDate) / (1000 * 60)); // 분 단위
+    return duration > 0 ? duration : '<1'; // 1분 미만일 경우
   }
     function toggleSelectPanel(valveId) {
       const valve = document.getElementById(valveId);
