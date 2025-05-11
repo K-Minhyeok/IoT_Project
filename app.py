@@ -55,11 +55,20 @@ def login():
     else:
         return render_template('login.html', error='비밀번호가 틀렸습니다.')
 
-@app.route('/index') 
+@app.route('/index')
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login_page'))
-    return render_template('index.html')
+
+    global valves
+    if os.path.exists(JSON_FILE):
+        with open(JSON_FILE, 'r') as f:
+            data = json.load(f)
+            valves = {int(k): Valve.from_dict(v) for k, v in data.items()}
+
+    return render_template('index.html', valves=valves)
+
+
 @app.route('/toggle', methods=['POST'])
 def toggle_valve():
     if not session.get('authenticated'):
@@ -101,9 +110,9 @@ def load_state():
         with open(JSON_FILE, 'r') as f:
             data = json.load(f)
             valves = {int(k): Valve.from_dict(v) for k, v in data.items()}
-        return jsonify({'message': 'JSON 파일에서 상태가 불러와졌습니다.'})
+        return jsonify({'message': 'JSON 파일에서 상태가 불러와졌습니다.', 'valves': data})
     else:
         return jsonify({'error': 'JSON 파일이 존재하지 않습니다.'})
-
+    
 if __name__ == '__main__':
     app.run(debug=True)

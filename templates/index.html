@@ -209,6 +209,42 @@
   </div>
 
 <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+    fetch('/load')  // 서버에서 JSON 파일 상태 로드
+      .then(response => response.json())
+      .then(data => {
+        console.log('초기 상태 로드:', data);
+        updateValveStates(data.valves);  // 로드된 상태로 UI 업데이트
+      })
+      .catch(error => console.error('Error:', error));
+  });
+
+  // 밸브 상태를 UI에 반영
+  function updateValveStates(valves) {
+    for (const valveNum in valves) {
+      const valve = valves[valveNum];
+      const valveElement = document.getElementById(`valve${valveNum}`);
+      
+      if (!valveElement) continue;
+
+      ['left', 'right'].forEach(side => {
+        const isActive = valve[side];
+        const container = valveElement.querySelector(`.side-button-container[data-side="${side}"]`);
+        const button = container.querySelector('.side-button');
+        const indicator = container.querySelector('.active-indicator');
+
+        if (isActive) {
+          button.classList.add('flowing');
+          indicator.textContent = '작동 중';
+          indicator.style.display = 'block';
+        } else {
+          button.classList.remove('flowing');
+          indicator.style.display = 'none';
+        }
+      });
+    }
+  }
     function toggleSelectPanel(valveId) {
       const valve = document.getElementById(valveId);
       const panel = valve.querySelector('.select-panel');
