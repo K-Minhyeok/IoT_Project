@@ -3,15 +3,15 @@
         "valve_number": 1,
         "left": false,
         "right": false,
-        "left_change_time": null,
-        "right_change_time": null
+        "left_change_time": "2025-05-18 22:53:45",
+        "right_change_time": "2025-05-18 22:53:36"
     },
     "2": {
         "valve_number": 2,
         "left": false,
-        "right": true,
-        "left_change_time": "2025-05-18 22:43:56",
-        "right_change_time": "2025-05-18 22:43:47"
+        "right": false,
+        "left_change_time": null,
+        "right_change_time": null
     },
     "3": {
         "valve_number": 3,
