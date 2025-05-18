@@ -4,13 +4,15 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+// const char* ssid = "hailers217";
+// const char* password = "SailTheHail";
 const char* ssid = "NTH413";
 const char* password = "cseenth413";
 
 const char* mqtt_server = "e94e4245a7a44cf9a744f49b1072c3f2.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883;
-const char* mqtt_user = "node1";
-const char* mqtt_pass = "node1NODE!";
+const char* mqtt_user = "node2";
+const char* mqtt_pass = "node2NODE@";
 
 // OLED Configuration
 #define SCREEN_WIDTH    128
@@ -90,9 +92,9 @@ void showMessage(const String& line1, const String& line2 = "") {
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client.connect("LilyGOClient", mqtt_user, mqtt_pass)) {
+    if (client.connect("LilyGOCliEnt2", mqtt_user, mqtt_pass)) {
       Serial.println("connected");
-      client.subscribe("handong/node1");
+      client.subscribe("handong/node2");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state()); 
@@ -135,6 +137,7 @@ void setup() {
       message += (char)payload[i];
     }
 
+    
     // OLED에 표시
     showMessage("Received:", message);
     if(message=="valve 1 on"){
@@ -159,6 +162,6 @@ void loop() {
   }
   client.loop();
   
-  client.publish("test/topic", "Hello from LilyGO!");
+  client.publish("test/topic", "Hello from LilyGO!2222");
   delay(5000);
 }
